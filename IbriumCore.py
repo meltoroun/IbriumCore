@@ -38,11 +38,12 @@ def copiraiter(img):
 
 
 # Конкатенация двух изображений для игнорирования температурной шкалы
-def concatenation(img, img_copy=0, xis=1):
+def concatenation(img, img_copy=0, x=700, y=640, xis=1):
+    img = img[0:x, 0:y]
     if img_copy == 0:
         img_copy = img
     vis = numpy.concatenate((img, img_copy), axis=xis)
-    return vis
+    return vis[0:740, 700:1300]
 
 
 # Визуализация 3D
