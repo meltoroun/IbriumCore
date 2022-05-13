@@ -1,3 +1,4 @@
+from cmath import pi, tan
 import cv2
 import imutils
 import numpy
@@ -13,6 +14,11 @@ def recognize_loss(img):
     cv2.drawContours(img, heat_loss, -1, (1, 1, 150), -10)
     cv2.drawContours(img, heat_loss, -1, (0, 255, 255), 1)
 
+    for heat in heat_loss:
+        perimetr = cv2.contourArea(heat)
+    
+    return perimetr
+        
 
 # Фильтрация недействительного источника теплопотерь
 def filtration(img, f_mode=4):
@@ -30,6 +36,34 @@ def filtration(img, f_mode=4):
         if len(approx) == f_mode:
             cv2.drawContours(img, [approx], -1, (0, 255,), -10)
             cv2.drawContours(img, [approx], -1, (255, 255, 255), 4)
+
+
+def view_width_calc(fov_hor, fov_vert, k):
+    x1 = 2 * tan((pi*fov_hor)/(2*180))*k
+    x2 = 2 * tan((pi*fov_vert)/(2*180))*k 
+    print(x1, x2)
+    return x1, x2
+
+
+def min_obj_size_calc(x1, px_hor):
+    s = (x1/px_hor)*100
+    return s
+
+
+def ds_calc(k, s):
+    ds = (k/s)*100
+    return ds
+
+
+def ifov_calc(fov_hor, px_hor):
+    iFoV = (fov_hor/px_hor)*(pi*180)*10
+    return iFoV
+
+
+def heat_calc(x1, x2, dT, R):
+    s_m2 = x1*x2
+    q = (s_m2 * dT) / R
+    return q
 
 
 def copiraiter(img):
