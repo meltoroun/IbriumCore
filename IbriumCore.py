@@ -13,11 +13,6 @@ def recognize_loss(img):
     heat_loss, hierarchy = cv2.findContours(thresh_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cv2.drawContours(img, heat_loss, -1, (1, 1, 150), -10)
     cv2.drawContours(img, heat_loss, -1, (0, 255, 255), 1)
-
-    for heat in heat_loss:
-        perimetr = cv2.contourArea(heat)
-    
-    return perimetr
         
 
 # Фильтрация недействительного источника теплопотерь
@@ -38,40 +33,53 @@ def filtration(img, f_mode=4):
             cv2.drawContours(img, [approx], -1, (255, 255, 255), 4)
 
 
+# Примерный расчет периметра зон теплопотерь
+def heat_loss_perimetr_calc(heat_loss):
+    for heat in heat_loss:
+        perimetr = cv2.contourArea(heat)
+    return perimetr
+    
+
+# Расчет ширины обзора по горизонтали/вертикали (метры)
 def view_width_calc(fov_hor, fov_vert, k):
-    x1 = 2 * tan((pi*fov_hor)/(2*180))*k
-    x2 = 2 * tan((pi*fov_vert)/(2*180))*k 
+    x1 = 2*tan((pi*fov_hor)/(2*180))*k
+    x2 = 2*tan((pi*fov_vert)/(2*180))*k 
     print(x1, x2)
     return x1, x2
 
 
+# Расчет минимального размера объекта (сторона квадрата) - S(приходящийся на один пиксель детектора) (см)
 def min_obj_size_calc(x1, px_hor):
     s = (x1/px_hor)*100
     return s
 
 
+# Расчет отношения D:S
 def ds_calc(k, s):
     ds = (k/s)*100
     return ds
 
 
+# Расчет пространственного разрешения или мгновенный угол поля зрения(iFov - Instantaneous Field of View) (мрад)
 def ifov_calc(fov_hor, px_hor):
     iFoV = (fov_hor/px_hor)*(pi*180)*10
     return iFoV
 
 
+# Расчет теплопотерь (на метр квадратный)
 def heat_calc(x1, x2, dT, R):
     s_m2 = x1*x2
-    q = (s_m2 * dT) / R
+    q = (s_m2*dT)/R
     return q
 
 
+# Копирайтер изображений 
 def copiraiter(img):
     img_copy = img
     return img_copy
 
 
-# Конкатенация двух изображений для игнорирования температурной шкалы
+# Конкатенация двух изображений для игнорирования температурной шкалы (Fluke only)
 def concatenation(img, img_copy=0, x=700, y=640, xis=1):
     img = img[0:x, 0:y]
     if img_copy == 0:
@@ -111,5 +119,5 @@ def recommend_sys(rec_status):
             text = "Нет теплопотерь"
             return text
         case 4:
-            text = "Неожиданная ошибка. ИН-4."
+            text = "Неожиданная ошибка"
             return text
