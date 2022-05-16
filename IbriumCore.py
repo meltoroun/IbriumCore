@@ -65,6 +65,11 @@ def ifov_calc(fov_hor, px_hor):
     iFoV = (fov_hor/px_hor)*(pi*180)*10
     return iFoV
 
+# Расчет dT
+def dt_calc(d, t):
+    dT = d-t
+    return dT
+
 
 # Расчет теплопотерь (на метр квадратный)
 def heat_calc(x1, x2, dT, R):
