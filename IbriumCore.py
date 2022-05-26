@@ -72,9 +72,8 @@ def dt_calc(d, t):
 
 
 # Расчет теплопотерь (на метр квадратный)
-def heat_calc(x1, x2, dT, R):
-    s_m2 = x1*x2
-    q = (s_m2*dT)/R
+def heat_calc(rctg, dT, R):
+    q = (rctg*dT)/R
     return q
 
 
